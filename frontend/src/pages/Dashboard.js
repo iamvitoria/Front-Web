@@ -338,14 +338,30 @@ export default function Dashboard({ nomeUsuario, onLogout }) {
               <div style={styles.modal}>
                 <p>Tem certeza que deseja excluir este link?</p>
                 <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
-                  <button onClick={() => handleDelete(confirmDeleteId)} style={{ ...styles.button, backgroundColor: "#2c3e50" }}>
-                    {deletingId === confirmDeleteId ? <div style={styles.loader}></div> : "Sim, excluir"}
+                  <button
+                    onClick={() => handleDelete(confirmDeleteId)}
+                    style={{ ...styles.button, backgroundColor: "#2c3e50" }}
+                  >
+                    {deletingId === confirmDeleteId ? (
+                      <div style={styles.loader}></div>
+                    ) : (
+                      "Sim, excluir"
+                    )}
                   </button>
-                  <button onClick={() => { setShowConfirm(false); setConfirmDeleteId(null); }} style={{ ...styles.button, backgroundColor: "gray" }}>
+                  <button
+                    onClick={() => {
+                      setShowConfirm(false);
+                      setConfirmDeleteId(null);
+                    }}
+                    style={{ ...styles.button, backgroundColor: "gray" }}
+                  >
                     Cancelar
                   </button>
                 </div>
               </div>
+            </div>
+          )}
+
           <button
             onClick={fetchSuggestion}
             style={styles.button}
@@ -355,13 +371,20 @@ export default function Dashboard({ nomeUsuario, onLogout }) {
               ? "Carregando sugestão..."
               : "Sugerir bookmark com IA"}
           </button>
+
           {suggestion && (
             <div style={{ marginTop: "10px" }}>
               <strong>Sugestão:</strong> {suggestion.title} - {suggestion.url} (
               {suggestion.description})
             </div>
           )}
-          <LinkList links={filteredLinks} onEdit={handleEdit} onDelete={confirmDelete} grid />
+
+          <LinkList
+            links={filteredLinks}
+            onEdit={handleEdit}
+            onDelete={confirmDelete}
+            grid
+          />
         </main>
       </div>
     </div>
@@ -379,13 +402,4 @@ const styles = {
   modalOverlay: { position: "fixed", top: 0, left: 0, width: "100%", height: "100%", backgroundColor: "rgba(0,0,0,0.5)", display: "flex", justifyContent: "center", alignItems: "center" },
   modal: { backgroundColor: "#fff", padding: "20px", borderRadius: "8px", minWidth: "300px" },
   loader: { width: "24px", height: "24px", border: "4px solid rgba(255, 255, 255, 0.3)", borderTop: "4px solid white", borderRadius: "50%", animation: "spin 1s linear infinite", margin: "0 auto" },
-  button: {
-    padding: "10px 20px",
-    borderRadius: "6px",
-    backgroundColor: "#2c3e50",
-    color: "#fff",
-    border: "none",
-    cursor: "pointer",
-    marginBottom: "10px",
-  },
 };
