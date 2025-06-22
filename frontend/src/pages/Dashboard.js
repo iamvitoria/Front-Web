@@ -133,11 +133,17 @@ export default function Dashboard({ nomeUsuario, onLogout }) {
   async function fetchSuggestion() {
     try {
       setLoadingSuggestion(true);
+
+      const descricoes = links
+        .filter((link) => link.description && link.description.trim() !== "")
+        .map((link) => link.description);
+
       const res = await fetch(`${API_URL}/suggest_bookmark`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user_id: userId }),
+        body: JSON.stringify({ user_id: userId, descricoes }),
       });
+
       const data = await res.json();
       if (res.ok) {
         setLinks((prev) => [
@@ -160,6 +166,7 @@ export default function Dashboard({ nomeUsuario, onLogout }) {
       setLoadingSuggestion(false);
     }
   }
+
 
   const handleAddLink = async (e) => {
     e.preventDefault();
