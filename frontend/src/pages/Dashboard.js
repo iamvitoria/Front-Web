@@ -136,7 +136,7 @@ export default function Dashboard({ nomeUsuario, onLogout }) {
       const res = await fetch(`${API_URL}/suggest_bookmark`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user_id }),
+        body: JSON.stringify({ user_id: userId }),
       });
       const data = await res.json();
       if (res.ok) {
