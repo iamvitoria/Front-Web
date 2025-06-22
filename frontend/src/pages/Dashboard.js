@@ -37,15 +37,12 @@ export default function Dashboard({ nomeUsuario, onLogout }) {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const username = params.get("username");
-    const storedId = localStorage.getItem("user_id");
 
-    if (storedId) {
-      setUserId(storedId);
-      return;
-    }
+    if (userId) return;
 
     if (username) {
       localStorage.setItem("github_username", username);
+
       fetch(`${API_URL}/users/github/${username}`)
         .then((res) => {
           if (!res.ok) throw new Error("Usuário GitHub não encontrado");
@@ -63,7 +60,7 @@ export default function Dashboard({ nomeUsuario, onLogout }) {
     } else {
       navigate("/login", { replace: true });
     }
-  }, [location.search, navigate]);
+  }, [location.search, navigate, userId]);
 
   // Busca os links (useCallback para não ser recriada toda hora)
   const fetchLinks = useCallback(async () => {
@@ -139,7 +136,7 @@ export default function Dashboard({ nomeUsuario, onLogout }) {
       const res = await fetch(`${API_URL}/suggest_bookmark`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user_id: userId }),
+        body: JSON.stringify({ user_id }),
       });
       const data = await res.json();
       if (res.ok) {
