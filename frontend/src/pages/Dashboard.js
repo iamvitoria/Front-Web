@@ -310,9 +310,15 @@ async function fetchSuggestion() {
               style={styles.input}
             />
             {erro && <span style={styles.erro}>{erro}</span>}
+
             <button type="submit" style={styles.button} disabled={isLoading}>
               {isLoading ? <div style={styles.loader}></div> : "Adicionar Link"}
             </button>
+
+            <button onClick={fetchSuggestion} style={styles.button} disabled={loadingSuggestion}>
+              {loadingSuggestion ? <div style={styles.loader}></div> : "Sugestão da IA"}
+          </button>
+
           </form>
 
           {editingLink && (
@@ -376,16 +382,6 @@ async function fetchSuggestion() {
   </div>
 )}
 
-<button
-  onClick={fetchSuggestion}
-  style={styles.button}
-  disabled={loadingSuggestion}
->
-  {loadingSuggestion
-    ? "Carregando sugestão..."
-    : "Sugerir bookmark com IA"}
-</button>
-
 {suggestion && (
   <div style={{ marginTop: "10px" }}>
     <strong>Sugestão:</strong> {suggestion.title} - {suggestion.url} (
@@ -444,6 +440,7 @@ const styles = {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+    zIndex: 9999, 
   },
   modal: {
     backgroundColor: "#fff",
