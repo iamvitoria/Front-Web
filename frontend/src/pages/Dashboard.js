@@ -22,7 +22,7 @@ export default function Dashboard({ nomeUsuario, onLogout }) {
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
 
   const [userId, setUserId] = useState(localStorage.getItem("user_id"));
-  const API_URL = "http://localhost:5000";
+  const API_URL = "https://project4-2025a-giulia-vitoria.onrender.com";
 
   const [folders, setFolders] = useState([]);
   const [selectedFolder, setSelectedFolder] = useState(null);
