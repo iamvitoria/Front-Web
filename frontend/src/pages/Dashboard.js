@@ -37,12 +37,15 @@ export default function Dashboard({ nomeUsuario, onLogout }) {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const username = params.get("username");
+    const storedId = localStorage.getItem("user_id");
 
-    if (userId) return;
+    if (storedId) {
+      setUserId(storedId);
+      return;
+    }
 
     if (username) {
       localStorage.setItem("github_username", username);
-
       fetch(`${API_URL}/users/github/${username}`)
         .then((res) => {
           if (!res.ok) throw new Error("Usuário GitHub não encontrado");
@@ -60,7 +63,7 @@ export default function Dashboard({ nomeUsuario, onLogout }) {
     } else {
       navigate("/login", { replace: true });
     }
-  }, [location.search, navigate, userId]);
+  }, [location.search, navigate]);
 
   // Busca os links (useCallback para não ser recriada toda hora)
   const fetchLinks = useCallback(async () => {

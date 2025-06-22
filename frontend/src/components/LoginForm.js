@@ -1,10 +1,12 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function LoginForm({ onLogin }) {
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,6 +32,7 @@ function LoginForm({ onLogin }) {
         localStorage.setItem("user_id", data.user_id);
 
         if (onLogin) onLogin(data.username);
+        navigate("/dashboard");
       } else {
         setErro(data.erro || "Erro no login");
       }
@@ -71,7 +74,6 @@ function LoginForm({ onLogin }) {
       >
         Entrar com GitHub
       </a>
-
     </form>
   );
 }
@@ -111,7 +113,7 @@ const styles = {
     borderRadius: "50%",
     animation: "spin 1s linear infinite",
     margin: "0 auto",
-  }
+  },
 };
 
 export default LoginForm;
