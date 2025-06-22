@@ -65,6 +65,7 @@ export default function Dashboard({ nomeUsuario, onLogout }) {
   // Busca os links (useCallback para não ser recriada toda hora)
   const fetchLinks = useCallback(async () => {
     try {
+      setIsLoading(true);
       const url = selectedFolder
         ? `${API_URL}/bookmarks?user_id=${userId}&folder_id=${selectedFolder}`
         : `${API_URL}/bookmarks?user_id=${userId}`;
@@ -73,8 +74,6 @@ export default function Dashboard({ nomeUsuario, onLogout }) {
       if (!res.ok) throw new Error("Erro ao buscar links");
 
       const data = await res.json();
-      console.log("Dados recebidos:", data);
-
       const formattedLinks = data.map((link) => ({
         id: link.id,
         title: link.titulo,
@@ -84,19 +83,20 @@ export default function Dashboard({ nomeUsuario, onLogout }) {
       }));
 
       setLinks(formattedLinks);
-      console.log("Links formatados:", formattedLinks);
     } catch (error) {
       console.error("Erro ao carregar links:", error);
+    } finally {
+      setIsLoading(false);
     }
   }, [userId, selectedFolder]);
-  
+
   // Chama fetchLinks quando userId ou selectedFolder mudam
   useEffect(() => {
     if (userId) {
       fetchLinks();
     }
   }, [userId, selectedFolder, fetchLinks]);
-  
+
   // Busca as pastas do usuário
   const fetchFolders = useCallback(async (uid) => {
     try {
@@ -129,6 +129,37 @@ export default function Dashboard({ nomeUsuario, onLogout }) {
 
     return matchesSearch && matchesFolder;
   });
+
+  async function fetchSuggestion() {
+    try {
+      setLoadingSuggestion(true);
+      const res = await fetch(`${API_URL}/suggest_bookmark`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setLinks((prev) => [
+          {
+            id: data.id,
+            title: data.title,
+            url: data.url,
+            description: data.description,
+            folderId: null,
+          },
+          ...prev,
+        ]);
+        setSuggestion(data);
+      } else {
+        alert("Erro ao sugerir: " + data.erro);
+      }
+    } catch (err) {
+      alert("Erro ao buscar sugestão: " + err.message);
+    } finally {
+      setLoadingSuggestion(false);
+    }
+  }
 
   const handleAddLink = async (e) => {
     e.preventDefault();
