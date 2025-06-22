@@ -66,6 +66,7 @@ export default function Dashboard({ nomeUsuario, onLogout }) {
   const fetchLinks = useCallback(async () => {
     try {
       setIsLoading(true);
+      console.log("Buscando bookmarks para user_id:", userId);
       const url = selectedFolder
         ? `${API_URL}/bookmarks?user_id=${userId}&folder_id=${selectedFolder}`
         : `${API_URL}/bookmarks?user_id=${userId}`;
