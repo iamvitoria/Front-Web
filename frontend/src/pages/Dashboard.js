@@ -66,7 +66,6 @@ export default function Dashboard({ nomeUsuario, onLogout }) {
   const fetchLinks = useCallback(async () => {
     try {
       setIsLoading(true);
-      console.log("Buscando bookmarks para user_id:", userId);
       const url = selectedFolder
         ? `${API_URL}/bookmarks?user_id=${userId}&folder_id=${selectedFolder}`
         : `${API_URL}/bookmarks?user_id=${userId}`;
@@ -264,34 +263,6 @@ export default function Dashboard({ nomeUsuario, onLogout }) {
     setShowConfirm(true);
   };
 
-
-async function fetchSuggestion() {
-  try {
-    setLoadingSuggestion(true);
-
-    const res = await fetch(`${API_URL}/suggest_bookmark`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        descricao: [
-          "Um site de tutoriais de programação",
-          "Um artigo sobre segurança cibernética",
-        ], // substitua por suas descrições reais
-      }),
-    });
-
-    const data = await res.json();
-    setSuggestion(data);
-  } catch (err) {
-    alert("Erro ao buscar sugestão: " + err.message);
-  } finally {
-    setLoadingSuggestion(false);
-  }
-}
-
-
   return (
     <div style={styles.container}>
       <Header
@@ -349,8 +320,7 @@ async function fetchSuggestion() {
 
             <button onClick={fetchSuggestion} style={styles.button} disabled={loadingSuggestion}>
               {loadingSuggestion ? <div style={styles.loader}></div> : "Sugestão da IA"}
-          </button>
-
+            </button>
           </form>
 
           {editingLink && (
@@ -386,42 +356,41 @@ async function fetchSuggestion() {
           )}
 
           {showConfirm && (
-    <div style={styles.modalOverlay}>
-    <div style={styles.modal}>
-      <p>Tem certeza que deseja excluir este link?</p>
-      <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
-        <button
-          onClick={() => handleDelete(confirmDeleteId)}
-          style={{ ...styles.button, backgroundColor: "#2c3e50" }}
-        >
-          {deletingId === confirmDeleteId ? (
-            <div style={styles.loader}></div>
-          ) : (
-            "Sim, excluir"
+            <div style={styles.modalOverlay}>
+              <div style={styles.modal}>
+                <p>Tem certeza que deseja excluir este link?</p>
+                <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+                  <button
+                    onClick={() => handleDelete(confirmDeleteId)}
+                    style={{ ...styles.button, backgroundColor: "#2c3e50" }}
+                  >
+                    {deletingId === confirmDeleteId ? (
+                      <div style={styles.loader}></div>
+                    ) : (
+                      "Sim, excluir"
+                    )}
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowConfirm(false);
+                      setConfirmDeleteId(null);
+                    }}
+                    style={{ ...styles.button, backgroundColor: "gray" }}
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            </div>
           )}
-        </button>
-        <button
-          onClick={() => {
-            setShowConfirm(false);
-            setConfirmDeleteId(null);
-          }}
-          style={{ ...styles.button, backgroundColor: "gray" }}
-        >
-          Cancelar
-        </button>
-      </div>
-    </div>
-  </div>
-)}
 
-{suggestion && (
-  <div style={{ marginTop: "10px" }}>
-    <strong>Sugestão:</strong> {suggestion.title} - {suggestion.url} (
-    {suggestion.description})
-  </div>
-)}
+          {suggestion && (
+            <div style={{ marginTop: "10px" }}>
+              <strong>Sugestão:</strong> {suggestion.title} - {suggestion.url} ({suggestion.description})
+            </div>
+          )}
 
-<LinkList
+          <LinkList
             links={filteredLinks}
             onEdit={handleEdit}
             onDelete={confirmDelete}
@@ -472,7 +441,7 @@ const styles = {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    zIndex: 9999, 
+    zIndex: 9999,
   },
   modal: {
     backgroundColor: "#fff",
