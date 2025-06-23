@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 export default function Sidebar({
   onCreateFolder = () => {},
   folders = [],
+  isLoading = false,
   setSelectedFolder = () => {},
   selectedFolder = null,
   onEditFolder = () => {},
@@ -186,84 +187,102 @@ const API_URL = process.env.REACT_APP_API_URL;
       </div>
 
       <ul style={styles.list}>
-        {folders.length === 0 && <li style={{ color: '#999' }}>Nenhuma pasta</li>}
+        {isLoading ? (
+          <li style={{ color: '#999' }}>Carregando pastas...</li>
+        ) : folders?.length === 0 ? (
+          <li style={{ color: '#999' }}>Nenhuma pasta</li>
+        ) : (
+          folders.map((folder) => (
+            <li
+              key={folder.id}
+              onClick={() => handleFolderClick(folder.id)}
+              onMouseEnter={() => setHoveredFolderId(folder.id)}
+              onMouseLeave={() => setHoveredFolderId(null)}
+              style={{
+                ...styles.item,
+                backgroundColor:
+                  selectedFolder === folder.id
+                    ? '#dfe6e9'
+                    : hoveredFolderId === folder.id
+                    ? '#b2bec3'
+                    : 'transparent',
+                padding: '5px',
+                borderRadius: '4px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                position: 'relative',
+                transition: 'background-color 0.3s ease',
+              }}
+            >
+              <span style={styles.link}>{folder.name}</span>
+              <div>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleMenu(folder.id);
+                  }}
+                  style={styles.iconButton}
+                  aria-label="Abrir menu"
+                >
+                  &#8942;
+                </button>
 
-        {folders.map((folder) => (
-          <li
-            key={folder.id}
-            onClick={() => handleFolderClick(folder.id)}
-            onMouseEnter={() => setHoveredFolderId(folder.id)}
-            onMouseLeave={() => setHoveredFolderId(null)}
-            style={{
-              ...styles.item,
-              backgroundColor:
-                selectedFolder === folder.id
-                  ? '#dfe6e9'
-                  : hoveredFolderId === folder.id
-                  ? '#b2bec3'
-                  : 'transparent',
-              padding: '5px',
-              borderRadius: '4px',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              position: 'relative',
-              transition: 'background-color 0.3s ease'
-            }}
-          >
-            <span style={styles.link}>{folder.name}</span>
-            <div>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toggleMenu(folder.id);
-                }}
-                style={styles.iconButton}
-                aria-label="Abrir menu"
-              >
-                &#8942;
-              </button>
+                {showMenus[folder.id] && (
+                  <div style={styles.menu}>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openEditModal(folder);
+                        closeMenu(folder.id);
+                      }}
+                      onMouseEnter={() =>
+                        setHoveredMenuItem({ folderId: folder.id, item: 'editar' })
+                      }
+                      onMouseLeave={() =>
+                        setHoveredMenuItem({ folderId: null, item: null })
+                      }
+                      style={{
+                        ...styles.menuItem,
+                        backgroundColor:
+                          hoveredMenuItem.folderId === folder.id &&
+                          hoveredMenuItem.item === 'editar'
+                            ? '#dfe6e9'
+                            : 'transparent',
+                      }}
+                    >
+                      Editar
+                    </button>
 
-              {showMenus[folder.id] && (
-                <div style={styles.menu}>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      openEditModal(folder);
-                      closeMenu(folder.id);
-                    }}
-                    onMouseEnter={() => setHoveredMenuItem({ folderId: folder.id, item: 'editar' })}
-                    onMouseLeave={() => setHoveredMenuItem({ folderId: null, item: null })}
-                    style={{
-                      ...styles.menuItem,
-                      backgroundColor:
-                        hoveredMenuItem.folderId === folder.id && hoveredMenuItem.item === 'editar' ? '#dfe6e9' : 'transparent',
-                    }}
-                  >
-                    Editar
-                  </button>
-
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      openDeleteModal(folder);
-                      closeMenu(folder.id);
-                    }}
-                    onMouseEnter={() => setHoveredMenuItem({ folderId: folder.id, item: 'excluir' })}
-                    onMouseLeave={() => setHoveredMenuItem({ folderId: null, item: null })}
-                    style={{
-                      ...styles.menuItem,
-                      backgroundColor:
-                        hoveredMenuItem.folderId === folder.id && hoveredMenuItem.item === 'excluir' ? '#dfe6e9' : 'transparent',
-                    }}
-                  >
-                    Excluir
-                  </button>
-                </div>
-              )}
-            </div>
-          </li>
-        ))}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openDeleteModal(folder);
+                        closeMenu(folder.id);
+                      }}
+                      onMouseEnter={() =>
+                        setHoveredMenuItem({ folderId: folder.id, item: 'excluir' })
+                      }
+                      onMouseLeave={() =>
+                        setHoveredMenuItem({ folderId: null, item: null })
+                      }
+                      style={{
+                        ...styles.menuItem,
+                        backgroundColor:
+                          hoveredMenuItem.folderId === folder.id &&
+                          hoveredMenuItem.item === 'excluir'
+                            ? '#dfe6e9'
+                            : 'transparent',
+                      }}
+                    >
+                      Excluir
+                    </button>
+                  </div>
+                )}
+              </div>
+            </li>
+          ))
+        )}
       </ul>
 
       {isEditModalOpen && (

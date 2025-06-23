@@ -5,7 +5,7 @@ import Sidebar from "../components/Sidebar";
 import LinkList from "../components/LinkList";
 
 export default function Dashboard({ nomeUsuario, onLogout }) {
-  const [links, setLinks] = useState([]);
+  const [links, setLinks] = useState(null);
   const [favorites, setFavorites] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -24,7 +24,9 @@ export default function Dashboard({ nomeUsuario, onLogout }) {
   const [userId, setUserId] = useState(localStorage.getItem("user_id"));
   const API_URL = "https://project4-2025a-giulia-vitoria.onrender.com";
 
-  const [folders, setFolders] = useState([]);
+  const [folders, setFolders] = useState(null);
+  const [isLoadingFolders, setIsLoadingFolders] = useState(false);
+
   const [selectedFolder, setSelectedFolder] = useState(null);
   const [loadingSuggestion, setLoadingSuggestion] = useState(false);
 
@@ -98,12 +100,15 @@ export default function Dashboard({ nomeUsuario, onLogout }) {
   // Busca as pastas do usuário
   const fetchFolders = useCallback(async (uid) => {
     try {
+      setIsLoadingFolders(true);
       const response = await fetch(`${API_URL}/folders?user_id=${uid}`);
       if (!response.ok) throw new Error("Erro ao buscar pastas");
       const folders = await response.json();
       setFolders(folders);
     } catch (error) {
       console.error(error.message);
+    } finally {
+      setIsLoadingFolders(false);
     }
   }, []);
   
@@ -114,7 +119,7 @@ export default function Dashboard({ nomeUsuario, onLogout }) {
     }
   }, [userId, fetchFolders]);
 
-  const filteredLinks = links.filter((link) => {
+  const filteredLinks = (links || []).filter((link) => {
     const matchesSearch =
       !searchTerm ||
       link.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -279,6 +284,7 @@ export default function Dashboard({ nomeUsuario, onLogout }) {
       <div style={styles.main}>
         <Sidebar
           folders={folders}
+          isLoading={isLoadingFolders}
           selectedFolder={selectedFolder}
           setSelectedFolder={setSelectedFolder}
           onCreateFolder={(newFolder) =>

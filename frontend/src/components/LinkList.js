@@ -1,6 +1,7 @@
 import React from 'react';
 
 export default function LinkList({ links, onEdit, onDelete, isLoading }) {
+  
   if (isLoading) {
     return <p style={{ padding: '20px' }}>Carregando links...</p>;
   }
