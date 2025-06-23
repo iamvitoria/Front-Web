@@ -1,8 +1,12 @@
 import React from 'react';
 
-export default function LinkList({ links, onEdit, onDelete, onAdd }) {
-  if (!links || links.length === 0) {
+export default function LinkList({ links, onEdit, onDelete, isLoading }) {
+  if (isLoading) {
     return <p style={{ padding: '20px' }}>Carregando links...</p>;
+  }
+
+  if (!links || links.length === 0) {
+    return <p style={{ padding: '20px' }}>Nenhum link encontrado.</p>;
   }
 
   const containerStyle = {
