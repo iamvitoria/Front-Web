@@ -26,8 +26,6 @@ export default function Dashboard({ nomeUsuario, onLogout }) {
 
   const [folders, setFolders] = useState([]);
   const [selectedFolder, setSelectedFolder] = useState(null);
-
-  const [suggestion, setSuggestion] = useState(null);
   const [loadingSuggestion, setLoadingSuggestion] = useState(false);
 
   const location = useLocation();
@@ -156,7 +154,6 @@ export default function Dashboard({ nomeUsuario, onLogout }) {
           },
           ...prev,
         ]);
-        setSuggestion(data);
       } else {
         alert("Erro ao sugerir: " + data.erro);
       }
@@ -388,12 +385,6 @@ export default function Dashboard({ nomeUsuario, onLogout }) {
                   </button>
                 </div>
               </div>
-            </div>
-          )}
-
-          {suggestion && (
-            <div style={{ marginTop: "10px" }}>
-              <strong>Sugestão:</strong> {suggestion.title} - {suggestion.url} ({suggestion.description})
             </div>
           )}
 
