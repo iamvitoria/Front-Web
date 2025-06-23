@@ -192,7 +192,7 @@ const API_URL = process.env.REACT_APP_API_URL;
         ) : folders?.length === 0 ? (
           <li style={{ color: '#999' }}>Nenhuma pasta</li>
         ) : (
-          folders.map((folder) => (
+          Array.isArray(folders) && folders.map((folder) => (
             <li
               key={folder.id}
               onClick={() => handleFolderClick(folder.id)}
