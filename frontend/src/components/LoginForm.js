@@ -66,7 +66,7 @@ function LoginForm({ onLogin }) {
       </button>
 
       <a
-        href={`${process.env.REACT_APP_API_URL}/github`}
+        href={`${process.env.REACT_APP_API_URL}/login/github`}
         style={{ ...styles.button, textAlign: "center", textDecoration: "none" }}
       >
         Entrar com GitHub
