@@ -392,6 +392,7 @@ export default function Dashboard({ nomeUsuario, onLogout }) {
 
           <LinkList
             links={filteredLinks}
+            isLoading={isLoading}
             onEdit={handleEdit}
             onDelete={confirmDelete}
             grid
