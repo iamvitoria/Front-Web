@@ -29,7 +29,7 @@ const [showMenus, setShowMenus] = useState({});
 const [hoveredFolderId, setHoveredFolderId] = useState(null);
 const [hoveredMenuItem, setHoveredMenuItem] = useState({ folderId: null, item: null });
 
-const API_URL = 'http://localhost:5000';
+const API_URL = process.env.REACT_APP_API_URL;
 
   const openDeleteModal = (folder) => {
     setDeleteFolderId(folder.id);
