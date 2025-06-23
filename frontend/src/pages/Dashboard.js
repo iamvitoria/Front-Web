@@ -132,14 +132,16 @@ export default function Dashboard({ nomeUsuario, onLogout }) {
     try {
       setLoadingSuggestion(true);
 
-      const descricoes = links
-        .filter((link) => link.description && link.description.trim() !== "")
-        .map((link) => link.description);
+      const contexto = links.map((link) => ({
+        title: link.title,
+        description: link.description,
+        url: link.url,
+      }));
 
       const res = await fetch(`${API_URL}/suggest_bookmark`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user_id: userId, descricoes }),
+        body: JSON.stringify({ user_id: userId, contexto }),
       });
 
       const data = await res.json();
