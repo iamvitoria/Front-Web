@@ -21,6 +21,9 @@ const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 const [deleteFolderId, setDeleteFolderId] = useState(null);
 const [deleteFolderName, setDeleteFolderName] = useState('');
 
+const [isSavingEdit, setIsSavingEdit] = useState(false);
+const [isDeletingFolder, setIsDeletingFolder] = useState(false);
+
 const [showMenus, setShowMenus] = useState({});
 
 const [hoveredFolderId, setHoveredFolderId] = useState(null);
@@ -40,20 +43,23 @@ const API_URL = 'http://localhost:5000';
     setDeleteFolderName('');
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (deleteFolderId) {
-      fetch(`${API_URL}/folders/${deleteFolderId}`, {
-        method: 'DELETE',
-      })
-      .then(res => {
+      setIsDeletingFolder(true);
+      try {
+        const res = await fetch(`${API_URL}/folders/${deleteFolderId}`, {
+          method: 'DELETE',
+        });
         if (!res.ok) throw new Error("Erro ao excluir pasta");
+
         onDeleteFolder(deleteFolderId);
         closeDeleteModal();
-      })
-      .catch(err => {
+      } catch (err) {
         console.error("Erro ao excluir pasta:", err);
         alert("Erro ao excluir pasta");
-      });
+      } finally {
+        setIsDeletingFolder(false);
+      }
     }
   };
 
@@ -69,25 +75,27 @@ const API_URL = 'http://localhost:5000';
     setEditFolderName('');
   };
 
-  const handleSaveEdit = () => {
+  const handleSaveEdit = async () => {
     if (editFolderName.trim() !== '') {
-      fetch(`${API_URL}/folders/${editFolderId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: editFolderName.trim() }),
-      })
-        .then(res => {
-          if (!res.ok) throw new Error('Erro ao editar pasta');
-          return res.json();
-        })
-        .then(() => {
-          onEditFolder(editFolderId, editFolderName.trim());
-          closeEditModal();
-        })
-        .catch(err => {
-          console.error('Erro ao editar pasta:', err);
-          alert('Erro ao editar pasta');
+      setIsSavingEdit(true);
+      try {
+        const res = await fetch(`${API_URL}/folders/${editFolderId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: editFolderName.trim() }),
         });
+
+        if (!res.ok) throw new Error('Erro ao editar pasta');
+
+        await res.json();
+        onEditFolder(editFolderId, editFolderName.trim());
+        closeEditModal();
+      } catch (err) {
+        console.error('Erro ao editar pasta:', err);
+        alert('Erro ao editar pasta');
+      } finally {
+        setIsSavingEdit(false);
+      }
     }
   };
 
@@ -270,8 +278,8 @@ const API_URL = 'http://localhost:5000';
               autoFocus
             />
             <div style={styles.modalButtons}>
-              <button onClick={handleSaveEdit} style={styles.button}>
-                Salvar
+              <button onClick={handleSaveEdit} style={styles.button} disabled={isSavingEdit}>
+                {isSavingEdit ? <div style={styles.loader}></div> : "Salvar"}
               </button>
               <button onClick={closeEditModal} style={styles.cancelButton}>
                 Cancelar
@@ -287,8 +295,8 @@ const API_URL = 'http://localhost:5000';
             <h3>Excluir Pasta</h3>
             <p>Tem certeza que deseja excluir a pasta <strong>{deleteFolderName}</strong>?</p>
             <div style={styles.modalButtons}>
-              <button onClick={handleConfirmDelete} style={styles.button}>
-                Excluir
+              <button onClick={handleConfirmDelete} style={styles.button} disabled={isDeletingFolder}>
+                {isDeletingFolder ? <div style={styles.loader}></div> : "Excluir"}
               </button>
               <button onClick={closeDeleteModal} style={styles.cancelButton}>
                 Cancelar
