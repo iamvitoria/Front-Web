@@ -2,6 +2,7 @@ import React, { useState } from "react";
 
 function LoginForm({ onLogin }) {
   const [isLoading, setIsLoading] = useState(false);
+  const [isGitHubLoading, setIsGitHubLoading] = useState(false); // Novo estado
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
@@ -26,9 +27,7 @@ function LoginForm({ onLogin }) {
 
       if (response.ok) {
         console.log("Login bem-sucedido:", data);
-
         localStorage.setItem("user_id", data.user_id);
-
         if (onLogin) onLogin(data.username);
       } else {
         setErro(data.erro || "Erro no login");
@@ -39,6 +38,11 @@ function LoginForm({ onLogin }) {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleGitHubLogin = () => {
+    setIsGitHubLoading(true);
+    window.location.href = `${process.env.REACT_APP_API_URL}/login/github`;
   };
 
   return (
@@ -60,18 +64,19 @@ function LoginForm({ onLogin }) {
         style={styles.input}
       />
       {erro && <span style={styles.erro}>{erro}</span>}
-      
+
       <button type="submit" style={styles.button} disabled={isLoading}>
         {isLoading ? <div style={styles.loader}></div> : "Entrar"}
       </button>
 
-      <a
-        href={`${process.env.REACT_APP_API_URL}/login/github`}
-        style={{ ...styles.button, textAlign: "center", textDecoration: "none" }}
+      <button
+        type="button"
+        onClick={handleGitHubLogin}
+        style={{ ...styles.button, textAlign: "center" }}
+        disabled={isGitHubLoading}
       >
-        Entrar com GitHub
-      </a>
-
+        {isGitHubLoading ? <div style={styles.loader}></div> : "Entrar com GitHub"}
+      </button>
     </form>
   );
 }
@@ -98,6 +103,9 @@ const styles = {
     border: "none",
     transition: "background 0.3s",
     opacity: 1,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
   erro: {
     color: "red",
@@ -110,7 +118,6 @@ const styles = {
     borderTop: "4px solid white",
     borderRadius: "50%",
     animation: "spin 1s linear infinite",
-    margin: "0 auto",
   }
 };
 
