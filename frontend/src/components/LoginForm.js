@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 function LoginForm({ onLogin }) {
   const [isLoading, setIsLoading] = useState(false);
-  const [isGitHubLoading, setIsGitHubLoading] = useState(false); // Novo estado
+  const [isGitHubLoading, setIsGitHubLoading] = useState(false); 
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
